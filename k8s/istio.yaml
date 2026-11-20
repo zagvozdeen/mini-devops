@@ -1,0 +1,31 @@
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: api
+spec:
+  selector:
+    matchLabels:
+      app: api
+  mtls:
+    mode: STRICT
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: api
+spec:
+  selector:
+    matchLabels:
+      app: api
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/login-lab/sa/ui
+      to:
+        - operation:
+            methods:
+              - POST
+            paths:
+              - /login
